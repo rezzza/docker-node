@@ -1,0 +1,37 @@
+FROM rezzza/docker-node:latest
+
+MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
+
+EXPOSE 3000
+
+RUN apk upgrade --update-cache \
+    && apk add --virtual .run-deps \
+        libmcrypt \
+    && apk add --virtual .build-app-deps \
+        curl \
+        bash \
+        git \
+        make \
+        automake \
+        autoconf \
+        nasm \
+        gcc \
+        g++ \
+        binutils-gold \
+        libgcc \
+        libstdc++ \
+        python \
+        libmcrypt-dev \
+        libpng-dev \
+        libpng \
+        libjpeg-turbo-dev \
+        jpeg-dev \
+    && npm config set spin=false \
+    && npm config set loglevel=http \
+    && npm install -g gulp@3.9.1 \
+    && rm -rf \
+        /usr/share/man \
+        /tmp/* \
+        /var/cache/apk/*
+
+CMD [ "node" ]
