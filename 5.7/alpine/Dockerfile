@@ -2,7 +2,7 @@ FROM alpine:edge
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
-ENV NPM_CONFIG_LOGLEVEL info \
+ENV NPM_CONFIG_LOGLEVEL=info \
         NODE_VERSION=5.7.1
 
 RUN apk upgrade --update-cache \
