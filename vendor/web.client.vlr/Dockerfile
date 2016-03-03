@@ -1,4 +1,4 @@
-FROM rezzza/docker-node:latest
+FROM rezzza/docker-node:5.7.1
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
