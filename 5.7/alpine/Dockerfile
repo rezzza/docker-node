@@ -36,11 +36,11 @@ RUN apk upgrade --update-cache \
     done \
     && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION.tar.xz" \
     && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-    && gpg --verify SHASUMS256.txt.asc \
-    && grep " node-v$NODE_VERSION.tar.xz\$" SHASUMS256.txt.asc | sha256sum -c - \
+    && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
+    && grep " node-v$NODE_VERSION.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
     && mkdir -p /usr/src \
     && tar -xJf "node-v$NODE_VERSION.tar.xz" -C /usr/src \
-    && rm node-v$NODE_VERSION.tar.xz SHASUMS256.txt.asc \
+    && rm node-v$NODE_VERSION.tar.xz SHASUMS256.txt.asc SHASUMS256.txt \
     && cd "/usr/src/node-v$NODE_VERSION" \
     && ./configure --prefix=/usr --with-intl=system-icu --shared-zlib --shared-libuv --shared-openssl \
     && make -j$(getconf _NPROCESSORS_ONLN) -C out mksnapshot BUILDTYPE=Release \
