@@ -17,6 +17,9 @@ RUN apk upgrade --update-cache \
         nasm \
         gcc \
         g++ \
+        openjdk-8-jre \
+        ocaml \
+        libelf-dev \
         binutils-gold \
         libgcc \
         libstdc++ \
