@@ -18,7 +18,6 @@ RUN apk upgrade --update-cache \
         gcc \
         g++ \
         openjdk-8-jre \
-        ocaml \
         libelf-dev \
         binutils-gold \
         libgcc \
