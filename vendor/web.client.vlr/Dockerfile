@@ -4,7 +4,8 @@ MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
 EXPOSE 3000
 
-RUN apk upgrade --update-cache \
+RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+    && apk upgrade --update-cache \
     && apk add --virtual .run-deps \
         libmcrypt \
     && apk add --virtual .build-app-deps \
@@ -17,7 +18,7 @@ RUN apk upgrade --update-cache \
         nasm \
         gcc \
         g++ \
-        openjdk-8-jre \
+        openjdk8-jre \
         libelf-dev \
         binutils-gold \
         libgcc \
@@ -28,6 +29,8 @@ RUN apk upgrade --update-cache \
         libpng \
         libjpeg-turbo-dev \
         jpeg-dev \
+    && apk add \
+        ocaml@testing \
     && npm config set spin=false \
     && npm config set loglevel=http \
     && rm -rf \
