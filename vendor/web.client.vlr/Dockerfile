@@ -28,7 +28,6 @@ RUN apk upgrade --update-cache \
         jpeg-dev \
     && npm config set spin=false \
     && npm config set loglevel=http \
-    && npm install -g gulp@3.9.1 \
     && rm -rf \
         /usr/share/man \
         /tmp/* \
