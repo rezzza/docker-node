@@ -22,6 +22,7 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
         binutils-gold \
         libgcc \
         libstdc++ \
+        python \
     && apk add --no-cache \
         libsass@testing \
     && npm config set spin=false \
