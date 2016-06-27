@@ -2,14 +2,10 @@ FROM rezzza/docker-node:6.2
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
-EXPOSE 3000
-
 ENV NPM_CONFIG_LOGLEVEL=warn \
     NPM_CONFIG_PROGRESS=false
 
-RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-    && cat /etc/apk/repositories \
-    && apk add --no-cache --virtual .build-app-deps \
+RUN apk add --no-cache --virtual .build-app-deps \
         curl \
         bash \
         git \
@@ -23,10 +19,9 @@ RUN echo "@testing http://nl.alpinelinux.org/alpine/edge/testing" >> /etc/apk/re
         libgcc \
         libstdc++ \
         python \
-    && apk add --no-cache \
-        libsass@testing \
     && npm config set spin=false \
     && npm config set loglevel=http \
+    && npm install -g npm-shrinkwrap \
     && rm -rf \
         /usr/share/man \
         /tmp/* \
