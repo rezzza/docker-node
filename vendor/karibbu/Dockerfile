@@ -1,4 +1,4 @@
-FROM rezzza/docker-node:6.3
+FROM rezzza/docker-node:6.5
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
@@ -21,7 +21,6 @@ RUN apk add --no-cache --virtual .build-app-deps \
         python \
     && npm config set spin=false \
     && npm config set loglevel=http \
-    && npm install -g npm-shrinkwrap \
     && rm -rf \
         /usr/share/man \
         /tmp/* \
