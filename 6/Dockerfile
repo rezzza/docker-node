@@ -3,7 +3,7 @@ FROM alpine:edge
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
 ENV NPM_CONFIG_LOGLEVEL=info \
-        NODE_VERSION=6.5.0
+        NODE_VERSION=6.6.0
 
 RUN apk upgrade --update-cache \
     && apk add --virtual .build-deps \
@@ -41,6 +41,7 @@ RUN apk upgrade --update-cache \
     && tar -xJf "node-v$NODE_VERSION.tar.xz" -C /usr/src \
     && rm node-v$NODE_VERSION.tar.xz SHASUMS256.txt.asc SHASUMS256.txt \
     && cd "/usr/src/node-v$NODE_VERSION" \
+    && export GYP_DEFINES="linux_use_gold_flags=0" \
     && ./configure --prefix=/usr --with-intl=system-icu --shared-zlib --shared-openssl \
     && make -j$(getconf _NPROCESSORS_ONLN) -C out mksnapshot BUILDTYPE=Release \
     && paxctl -cm out/Release/mksnapshot \
