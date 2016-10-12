@@ -3,7 +3,10 @@ FROM alpine:edge
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
 ENV NPM_CONFIG_LOGLEVEL=info \
-        NODE_VERSION=6.7.0
+        NODE_VERSION=6.7.0 \
+        PATH=/root/.yarn/bin:$PATH
+
+VOLUME /root/.yarn-cache
 
 RUN apk upgrade --update-cache \
     && apk add --virtual .build-deps \
@@ -49,6 +52,7 @@ RUN apk upgrade --update-cache \
     && make install \
     && paxctl -cm /usr/bin/node \
     && cd / \
+    && curl -o- -L https://yarnpkg.com/install.sh | ash \
     && runDeps="$( \
         scanelf --needed --nobanner --recursive /usr/bin/node /usr/lib/node* \
             | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
