@@ -4,7 +4,8 @@ MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
 ENV NPM_CONFIG_LOGLEVEL=warn \
     NPM_CONFIG_PROGRESS=false \
-    PATH=/var/cache/node/.yarn/bin:$PATH
+    YARN_VERSION=0.18.0 \
+    PATH=/home/node/.yarn/bin:$PATH
 
 RUN apk add --no-cache --virtual .build-app-deps \
         autoconf \
@@ -21,7 +22,6 @@ RUN apk add --no-cache --virtual .build-app-deps \
         nasm \
         python \
         tar \
-    && cd / \
     && rm -rf \
         /usr/share/man \
         /tmp/* \
@@ -29,7 +29,9 @@ RUN apk add --no-cache --virtual .build-app-deps \
 
 USER node
 
-RUN curl -o- -L https://yarnpkg.com/install.sh | ash \
+RUN mkdir -p ~/.yarn/bin \
+    && curl --compressed -o ~/.yarn/bin/yarn -L https://github.com/yarnpkg/yarn/releases/download/v$YARN_VERSION/yarn-$YARN_VERSION.js \
+    && chmod a+x ~/.yarn/bin/yarn \
     && npm config set spin=false \
     && npm config set loglevel=http \
 
