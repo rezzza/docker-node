@@ -1,29 +1,23 @@
-FROM alpine:edge
+FROM alpine:3.4
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
-ENV NPM_CONFIG_LOGLEVEL=info \
-        NODE_VERSION=6.9.0 \
-        PATH=/root/.yarn/bin:$PATH
+ENV NPM_CONFIG_LOGLEVEL info
+ENV NODE_VERSION 6.9.2
 
-VOLUME /root/.yarn-cache
-
-RUN apk upgrade --update-cache \
-    && apk add --virtual .build-deps \
-        gcc \
+RUN adduser -D -u 1000 node \
+    && apk add --no-cache \
+        icu-libs \
+    && apk add --no-cache --virtual .build-deps \
+        binutils-gold \
+        curl \
         g++ \
-        libc-dev \
+        gcc \
+        gnupg \
+        icu-dev \
+        linux-headers \
         make \
         python \
-        linux-headers \
-        zlib-dev \
-        paxctl \
-        binutils-gold \
-        gnupg \
-        curl \
-        icu-dev \
-        openssl-dev \
-        pax-utils \
     && for key in \
         9554F04D7259F04124DE6B476D5A82AC7E37093B \
         94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
@@ -40,38 +34,14 @@ RUN apk upgrade --update-cache \
     && curl -SLO "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
     && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
     && grep " node-v$NODE_VERSION.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-    && mkdir -p /usr/src \
-    && tar -xJf "node-v$NODE_VERSION.tar.xz" -C /usr/src \
-    && rm node-v$NODE_VERSION.tar.xz SHASUMS256.txt.asc SHASUMS256.txt \
-    && cd "/usr/src/node-v$NODE_VERSION" \
-    && export GYP_DEFINES="linux_use_gold_flags=0" \
-    && ./configure --prefix=/usr --with-intl=system-icu --shared-zlib --shared-openssl \
-    && make -j$(getconf _NPROCESSORS_ONLN) -C out mksnapshot BUILDTYPE=Release \
-    && paxctl -cm out/Release/mksnapshot \
+    && tar -xf "node-v$NODE_VERSION.tar.xz" \
+    && cd "node-v$NODE_VERSION" \
+    && ./configure --with-intl=system-icu \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
-    && paxctl -cm /usr/bin/node \
-    && cd / \
-    && curl -o- -L https://yarnpkg.com/install.sh | ash \
-    && runDeps="$( \
-        scanelf --needed --nobanner --recursive /usr/bin/node /usr/lib/node* \
-            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-            | sort -u \
-            | xargs -r apk info --installed \
-            | sort -u )" \
-    && apk add --virtual .node-rundeps $runDeps \
-    && apk del --virtual .build-deps \
-    && rm -rf \
-        /usr/src/* \
-        /usr/share/doc \
-        /usr/share/man \
-        /usr/share/doc \
-        /tmp/* \
-        /var/cache/apk/* \
-        /root/.npm \
-        /root/.node-gyp \
-        /usr/lib/node_modules/npm/man \
-        /usr/lib/node_modules/npm/doc \
-        /usr/lib/node_modules/npm/html
+    && apk del .build-deps \
+    && cd .. \
+    && rm -Rf "node-v$NODE_VERSION" \
+    && rm "node-v$NODE_VERSION.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt
 
 CMD [ "node" ]
