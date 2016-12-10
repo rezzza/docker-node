@@ -4,23 +4,19 @@ MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
 ENV YARN_VERSION 0.18.0
 ENV PATH /home/node/.yarn/bin:$PATH
+ENV SASS_BINARY_PATH=/home/node/node-sass-binding.node
+ENV SKIP_SASS_BINARY_DOWNLOAD_FOR_CI=true
 
 RUN apk add --no-cache --virtual .build-app-deps \
-        autoconf \
-        automake \
         bash \
         curl \
-        g++ \
-        gcc \
-        git \
-        libgcc \
-        libstdc++ \
-        make \
-        nasm \
-        python \
         tar
 
 USER node
+
+WORKDIR /home/node
+
+ADD node-sass-binding.node /home/node
 
 RUN mkdir -p ~/.yarn/bin \
     && curl --compressed -o ~/.yarn/bin/yarn -L https://github.com/yarnpkg/yarn/releases/download/v$YARN_VERSION/yarn-$YARN_VERSION.js \
