@@ -1,4 +1,4 @@
-FROM node:6.9.4-alpine
+FROM rezzza/docker-node:6.9.4
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
@@ -30,7 +30,6 @@ RUN apk add --no-cache --virtual .base-deps \
     && su node -lc "yarn global add --global-folder=/home/node buffertools" \
     && apk del .build-buffertools-deps \
     && su node -lc "yarn cache clean" \
-    && sed -i -e 's/v3\.4/edge/g' /etc/apk/repositories \
     && apk add --no-cache --virtual .build-flow-deps \
         alpine-sdk \
         ocaml \
@@ -53,8 +52,7 @@ RUN apk add --no-cache --virtual .base-deps \
     && cd / \
     && cp /tmp/flow-${FLOW_VERSION}/bin/flow /usr/local/bin \
     && rm -rf /tmp/* \
-    && apk del .build-flow-deps \
-    && sed -i -e 's/edge/v3\.4/g' /etc/apk/repositories
+    && apk del .build-flow-deps
 
 USER node
 
