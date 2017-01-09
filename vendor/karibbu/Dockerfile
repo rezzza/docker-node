@@ -26,6 +26,11 @@ RUN apk add --no-cache --virtual .base-deps \
         inotify-tools \
         linux-headers \
         diffutils \
+    && apk add --no-cache --virtual .build-buffertools-deps \
+        python \
+        gcc \
+        g++ \
+        make \
     && cd /tmp \
     && curl -SL https://github.com/facebook/flow/archive/v${FLOW_VERSION}.tar.gz -o /tmp/flow-${FLOW_VERSION}.tgz \
     && tar -C /tmp -xzpf /tmp/flow-${FLOW_VERSION}.tgz \
@@ -38,7 +43,9 @@ RUN apk add --no-cache --virtual .base-deps \
     && cp /tmp/flow-${FLOW_VERSION}/bin/flow /usr/local/bin \
     && rm -rf /tmp/* \
     && apk del .build-flow-deps \
-    && sed -i -e 's/edge/v3\.4/g' /etc/apk/repositories
+    && sed -i -e 's/edge/v3\.4/g' /etc/apk/repositories \
+    && touch /usr/local/bin/node-gyp \
+    && chown node:node /usr/local/bin/node-gyp
 
 USER node
 
@@ -47,6 +54,14 @@ WORKDIR /home/node
 RUN mkdir -p ~/.yarn/bin \
     && curl --compressed -o ~/.yarn/bin/yarn -L https://github.com/yarnpkg/yarn/releases/download/v$YARN_VERSION/yarn-$YARN_VERSION.js \
     && chmod a+x ~/.yarn/bin/yarn \
-    && npm config set spin=false
+    && npm config set spin=false \
+    && yarn global add --global-folder=/home/node node-gyp \
+    && yarn global add --global-folder=/home/node buffertools
+
+USER root
+
+RUN apk del .build-buffertools-deps
+
+USER node
 
 CMD [ "node" ]
