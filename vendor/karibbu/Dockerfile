@@ -2,8 +2,8 @@ FROM rezzza/docker-node:6.9.4
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
-ENV YARN_VERSION 0.18.1
-ENV FLOW_VERSION 0.37.4
+ENV YARN_VERSION 0.19.1
+ENV FLOW_VERSION 0.38.0
 ENV PATH /home/node/.yarn/bin:$PATH
 
 COPY flow.patch /tmp/
