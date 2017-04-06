@@ -3,7 +3,7 @@ FROM alpine:3.5
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 7.6.0
+ENV NODE_VERSION 7.8.0
 
 RUN adduser -D -u 1000 node \
     && apk add --no-cache \
