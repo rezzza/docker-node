@@ -1,12 +1,10 @@
-FROM rezzza/docker-node:7.6.0
+FROM rezzza/docker-node:7.8.0
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
-ENV YARN_VERSION 0.21.2
-ENV FLOW_VERSION 0.40.0
+ENV YARN_VERSION 0.22.0
+ENV FLOW_VERSION 0.43.1
 ENV PATH /home/node/.yarn/bin:$PATH
-
-COPY flow.patch /tmp/
 
 RUN apk add --no-cache --virtual .base-deps \
         libelf \
@@ -46,8 +44,6 @@ RUN apk add --no-cache --virtual .base-deps \
     && tar -C /tmp -xzpf /tmp/flow-${FLOW_VERSION}.tgz \
     && rm /tmp/flow-${FLOW_VERSION}.tgz \
     && cd /tmp/flow-${FLOW_VERSION} \
-    && cp /tmp/flow.patch . \
-    && git apply flow.patch \
     && make -j"$(getconf _NPROCESSORS_ONLN)" \
     && cd / \
     && cp /tmp/flow-${FLOW_VERSION}/bin/flow /usr/local/bin \
