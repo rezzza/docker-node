@@ -1,9 +1,9 @@
-FROM rezzza/docker-node:7.9.0
+FROM rezzza/docker-node:8.0.0
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
-ENV YARN_VERSION 0.23.2
-ENV FLOW_VERSION 0.44.1
+ENV YARN_VERSION 0.24.6
+ENV FLOW_VERSION 0.47
 ENV PATH /home/node/.yarn/bin:$PATH
 
 RUN apk add --no-cache --virtual .base-deps \
@@ -31,6 +31,8 @@ RUN apk add --no-cache --virtual .base-deps \
     && apk add --no-cache --virtual .build-flow-deps \
         alpine-sdk \
         ocaml \
+        ocaml-findlib \
+        opam \
         lz4 \
         lz4-dev \
         ocamlbuild \
