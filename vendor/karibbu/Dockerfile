@@ -30,18 +30,20 @@ RUN apk add --no-cache --virtual .base-deps \
     && su node -lc "yarn cache clean" \
     && apk add --no-cache --virtual .build-flow-deps \
         alpine-sdk \
+        m4 \
         ocaml \
-        ocaml-findlib \
         opam \
         lz4 \
         lz4-dev \
-        ocamlbuild \
         libelf-dev \
         ncurses \
         inotify-tools \
         linux-headers \
         diffutils \
     && cd /tmp \
+    && opam init \
+    && eval `opam config env` \
+    && opam install sedlex \
     && curl --compressed -SL https://github.com/facebook/flow/archive/v${FLOW_VERSION}.tar.gz -o /tmp/flow-${FLOW_VERSION}.tgz \
     && tar -C /tmp -xzpf /tmp/flow-${FLOW_VERSION}.tgz \
     && rm /tmp/flow-${FLOW_VERSION}.tgz \
