@@ -1,8 +1,7 @@
-FROM rezzza/docker-node:8.0.0
+FROM node:8.1.0-alpine
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
-ENV YARN_VERSION 0.24.6
 ENV FLOW_VERSION 0.47
 ENV PATH /home/node/.yarn/bin:$PATH
 
@@ -12,22 +11,7 @@ RUN apk add --no-cache --virtual .base-deps \
     && apk add --no-cache --virtual .build-app-deps \
         bash \
         curl \
-    && su node -c "echo 'PATH=/home/node/.yarn/bin:\$PATH' > /home/node/.profile" \
-    && su node -lc "mkdir -p ~/.yarn/bin" \
-    && su node -lc "curl --compressed -o ~/.yarn/bin/yarn -L https://github.com/yarnpkg/yarn/releases/download/v$YARN_VERSION/yarn-$YARN_VERSION.js" \
-    && su node -lc "chmod a+x ~/.yarn/bin/yarn" \
     && su node -lc "npm config set spin=false" \
-    && apk add --no-cache --virtual .build-buffertools-deps \
-        python \
-        gcc \
-        g++ \
-        make \
-    && chown node:node /usr/local/bin \
-    && su node -lc "yarn global add --global-folder=/home/node node-gyp" \
-    && chown root:root /usr/local/bin \
-    && su node -lc "yarn global add --global-folder=/home/node buffertools" \
-    && apk del .build-buffertools-deps \
-    && su node -lc "yarn cache clean" \
     && apk add --no-cache --virtual .build-flow-deps \
         alpine-sdk \
         m4 \
@@ -52,6 +36,7 @@ RUN apk add --no-cache --virtual .base-deps \
     && cd / \
     && cp /tmp/flow-${FLOW_VERSION}/bin/flow /usr/local/bin \
     && rm -rf /tmp/* \
+    && opam repository remove default \
     && apk del .build-flow-deps
 
 USER node
