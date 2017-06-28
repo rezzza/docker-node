@@ -2,7 +2,8 @@ FROM node:8.1.2-alpine
 
 MAINTAINER Sébastien HOUZÉ <sebastien.houze@verylastroom.com>
 
-ENV FLOW_VERSION 0.47
+ENV FLOW_VERSION 0.49.1
+ENV OCAML_VERSION 4.03.0
 ENV PATH /home/node/.yarn/bin:$PATH
 
 RUN apk add --no-cache --virtual .base-deps \
@@ -11,11 +12,11 @@ RUN apk add --no-cache --virtual .base-deps \
     && apk add --no-cache --virtual .build-app-deps \
         bash \
         curl \
+        git \
     && su node -lc "npm config set spin=false" \
     && apk add --no-cache --virtual .build-flow-deps \
         alpine-sdk \
         m4 \
-        ocaml \
         opam \
         lz4 \
         lz4-dev \
@@ -25,7 +26,7 @@ RUN apk add --no-cache --virtual .base-deps \
         linux-headers \
         diffutils \
     && cd /tmp \
-    && opam init \
+    && opam init --comp=$OCAML_VERSION \
     && eval `opam config env` \
     && opam install sedlex \
     && curl --compressed -SL https://github.com/facebook/flow/archive/v${FLOW_VERSION}.tar.gz -o /tmp/flow-${FLOW_VERSION}.tgz \
@@ -37,6 +38,7 @@ RUN apk add --no-cache --virtual .base-deps \
     && cp /tmp/flow-${FLOW_VERSION}/bin/flow /usr/local/bin \
     && rm -rf /tmp/* \
     && opam repository remove default \
+    && rm -rf /root/.opam \
     && apk del .build-flow-deps
 
 USER node
